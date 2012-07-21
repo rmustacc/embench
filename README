@@ -1,0 +1,66 @@
+                _                     _     
+  ___ _ __ ___ | |__   ___ _ __   ___| |__  
+ / _ \ '_ ` _ \| '_ \ / _ \ '_ \ / __| '_ \ 
+|  __/ | | | | | |_) |  __/ | | | (__| | | |
+ \___|_| |_| |_|_.__/ \___|_| |_|\___|_| |_|
+
+C Extensible micro-benchmark
+
+This is a simple C program and module API for running micro-benchmarks.
+Benchmarking is hard, so the tools that run the benchmark should be as
+easy to understand as possible. The goal here is a minimal feature set
+and API. embench does not do any summarizing of output, nor is that it's
+design. You should use other programs to process the results.
+
+Benchmarks generally run for either a fixed amount of time and measure
+the number of operations that passed or they run for a fixed number of
+operations and measure how much time has passed. embench benhmarks are
+designed for the latter case. A test has the following responsibilities:
+responsibilities:
+
+ * Telling the framework how many operations occurred
+ * Notify the framework when to start and when to stop tracking elapsed
+   time.
+ * Being multi-threaded safe
+ * Having a description
+
+Tests may be as complex as the author wishes, but the simpler the
+benchmark, the easier it is to understand and parse the results.
+
+--------
+
+Prerequisites:
+
+ o Sun make or GNU make
+ o A C compiler that accepts GCC arguments
+ o A linker that knows how to deal with mapfiles
+
+Building:
+
+ o Symlink the appropriate Makefile.host.<platform> to Makefile.host
+   e.g. ln -s Makefile.host.sunos Makefile.host
+ o Simply run `make`
+
+32-bit artifacts are output in i386. 64-bit artifacts are output in
+amd64. The main tool is called 'embench'.
+
+Running:
+
+  o Run ./amd64/embench or ./i386/embench to get the 32-bit or 64-bit
+    program
+  o Run ./amd64/embench -h to list the full options
+  o Run ./amd64/embench -l to list all the available test:
+
+MODULE               DESCRIPTION
+malloc/loop4k        malloc and free 4 KB buffers in a loop
+...
+
+  o Run that test by ./amd64/embench -m malloc/loop4k
+
+Writing modules:
+
+It's easy to write new modules. For a full example, take a look at
+modules/examples/example.c. Copy that example and modify it
+appropriately. Stick it in some directory under modules and add it to
+the list of modules in Makefile.com. After that, you can re-run make and
+run your specific module.
