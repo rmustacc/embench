@@ -36,10 +36,17 @@ clean: amd64/Makefile i386/Makefile
 clobber: amd64/Makefile i386/Makefile
 	cd amd64 && $(MAKE) clobber
 	cd i386 && $(MAKE) clobber
+	rm -f cscope.*
 
 check:
 	$(CSTYLE) *.c *.h
 	$(HDRCHK) *.h
+
+cscope.files:
+	find . -type f -name '*.[ch]' > cscope.files
+
+xref: cscope.files
+	cscope-fast -bq
 	
 
-.PHONY: clean bench
+.PHONY: clean bench xref
