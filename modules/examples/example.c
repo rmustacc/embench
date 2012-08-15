@@ -50,6 +50,27 @@
 const char *embench_desc = "example plugin for embench";
 
 /*
+ * This is an optional entry point. This function will be called by the test
+ * before the main embench_run entry point is called. This will be called by
+ * only one thread. The purpose of this optional entry point is to set up
+ * any global that the test might need: creating mutexes, opening file
+ * descriptors, memory mapping something, etc.
+ */
+void *
+embench_prerun(void)
+{
+
+	/*
+	 * This function should return EMBENCH_SUCCESS to indicate that it has
+	 * successfully finished its initialization. If however, some
+	 * initialization failed to complete, you should instead print out an
+	 * error message and return EMBENCH_FAILURE. This will cause a fatal
+	 * error and the program will exit without running the test.
+	 */
+	return (EMBENCH_SUCCESS);
+}
+
+/*
  * This is a required entry point. It will be called into by multiple threads,
  * so the function should ensure that it only uses thread-safe interfaces.
  */
@@ -119,4 +140,16 @@ embench_run(embench_arg_t *arg)
 	 * to do this is with EMBENCH_SUCCESS.
 	 */
 	return (EMBENCH_SUCCESS);
+}
+
+/*
+ * This function will run after the test has terminated. Here you should go
+ * through and clean up anything that was done during the embench_prerun
+ * function. This entry point is not required if you did not define the
+ * embench_prerun entry point.
+ */
+void
+embench_postrun(void)
+{
+	return;
 }

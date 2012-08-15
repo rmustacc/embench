@@ -53,6 +53,8 @@ static char *g_pname;
 static char *g_dname;
 static int g_nthreads;
 static embench_func_t g_func;
+static embench_prerun_t g_pref;
+static embench_postrun_t g_postf;
 
 /*
  * Wrapper function for the fact that other platforms don't have gethrtime.
@@ -284,10 +286,27 @@ main(int argc, char *argv[])
 	mod = dlopen(buf, RTLD_NOW | RTLD_LOCAL);
 	if (mod == NULL)
 		fatal("unable to open %s: %s\n", buf, dlerror());
+	g_pref = dlsym(mod, "embench_prerun");
+	g_postf = dlsym(mod, "embench_postrun");
+
+	if (g_pref == NULL && g_postf != NULL)
+		fatal("embench_postrun defined but not embench_prerun");
+
+	if (g_pref != NULL && g_postf == NULL)
+		fatal("embench_prerun defined but not embench_postrun");
+
 	g_func = dlsym(mod, "embench_run");
 	if (g_func == NULL)
 		fatal("unable to find embench_run symbol\n");
 
+	if (g_pref != NULL)
+		if (g_pref() != EMBENCH_SUCCESS)
+			fatal("embench_prerun failed\n");
+
+
 	run_tests(g_nthreads);
+	if (g_postf != NULL)
+		g_postf();
+
 	return (0);
 }

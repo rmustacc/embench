@@ -39,7 +39,9 @@ extern "C" {
  */
 typedef struct embench_arg embench_arg_t;
 
-typedef int(*embench_func_t)(embench_arg_t *);
+typedef void *(*embench_prerun_t)(void);
+typedef void(*embench_postrun_t)(void);
+typedef void *(*embench_func_t)(embench_arg_t *);
 
 void embench_timer_start(embench_arg_t *);
 void embench_timer_stop(embench_arg_t *);
